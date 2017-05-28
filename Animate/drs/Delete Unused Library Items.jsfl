@@ -12,9 +12,6 @@
 		//init output panel
 		fl.outputPanel.clear();
 
-		//opening message
-		fl.trace("--------- Deleting unused library items... ---------");
-
 		var items = fl.getDocumentDOM().library.unusedItems;
 
 		//no items to delete
@@ -22,6 +19,9 @@
 			fl.trace("No unused items");
 			return;
 		}
+		
+		//opening message
+		fl.trace("--------- Deleting unused library items... ---------");
 
 		//trace out results and delet item all in one go.
 		for (var i in items) {
