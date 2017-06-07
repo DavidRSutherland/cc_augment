@@ -12,10 +12,7 @@
 
 		//initialize and clear
 		this.init();
-
-		//array of objects found with color effects
-		this.colorizedObjects = [];
-
+		
 		//loop through the main timeline
 		for (i = 0; i < fl.getDocumentDOM().timelines.length; ++i) {
 			this.findColorEffects(fl.getDocumentDOM().timelines[i]);
@@ -47,9 +44,16 @@
 
 	};
 
-
 	ColorEffectDetect.prototype.init = function () {
+	
+		//array of objects found with color effects
+		this.colorizedObjects = [];
+
+		//array of elements found to recursively search their timelines and avoid duplication
+		this.elementsFound = [];
+		
 		fl.outputPanel.clear();
+		
 		fl.trace("---------- Color Effect Detect ----------");
 
 	};
@@ -82,9 +86,11 @@
 							layer: thisLayer.name,
 							el: thisElement
 						});
-
+						
 					}
-
+					
+					this.searchElement(thisElement);
+					
 				}
 
 				//jump the keyframe duraction otherwise it will grab every non-keyframe
@@ -108,9 +114,18 @@
 		return false;
 	};
 
+	//search inside any symbol timelines on stage
+	ColorEffectDetect.prototype.searchElement = function (el) {
 
+			//fl.trace(el.name);//returning blank, fix
+		//todo find unique identifier of valid symbols
+			if (this.elementsFound.indexOf(el.name) != -1){
+				this.elementsFound.push(el.name);
+				this.findColorEffects(el.timeline);
+			}
 
-
+		};
+	
 	new ColorEffectDetect;
 
 
