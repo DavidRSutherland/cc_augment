@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
 
 	/**
 	 *  Color Effect Detect
@@ -12,7 +12,7 @@
 
 		//initialize and clear
 		this.init();
-		
+
 		//loop through the main timeline
 		for (i = 0; i < fl.getDocumentDOM().timelines.length; ++i) {
 			this.findColorEffects(fl.getDocumentDOM().timelines[i]);
@@ -23,7 +23,7 @@
 
 	};
 
-	ColorEffectDetect.prototype.traceToOutput = function () {
+	ColorEffectDetect.prototype.traceToOutput = function() {
 		//todo make this pretty
 		var outputString = "";
 		//todo make less junky
@@ -41,24 +41,23 @@
 			var outputString = "";
 		}
 
-
 	};
 
-	ColorEffectDetect.prototype.init = function () {
-	
+	ColorEffectDetect.prototype.init = function() {
+
 		//array of objects found with color effects
 		this.colorizedObjects = [];
 
 		//array of elements found to recursively search their timelines and avoid duplication
 		this.elementsFound = [];
-		
+
 		fl.outputPanel.clear();
-		
+
 		fl.trace("---------- Color Effect Detect ----------");
 
 	};
 
-	ColorEffectDetect.prototype.findColorEffects = function (tl, tlName) {
+	ColorEffectDetect.prototype.findColorEffects = function(tl, tlName) {
 
 		var thisLayer;
 		var thisFrame;
@@ -78,19 +77,18 @@
 
 					if (this.isColorized(thisElement)) {
 
-						//fl.trace(thisElement)
-						//todo drill down into symbol timelines
 						this.colorizedObjects.push({
-							timeline: tl.name,
-							frame: k + 1,
-							layer: thisLayer.name,
-							el: thisElement
+							timeline: tl.name
+							, frame: k
+							, layer: thisLayer.name
+							, el: thisElement
 						});
-						
+
+						//search this element's timeline (if there is one)
+						this.searchElement(thisElement.libraryItem);
+
 					}
-					
-					this.searchElement(thisElement);
-					
+
 				}
 
 				//jump the keyframe duraction otherwise it will grab every non-keyframe
@@ -102,7 +100,7 @@
 	};
 
 	//checks to see if this element meets criteria we're looking for
-	ColorEffectDetect.prototype.isColorized = function (el) {
+	ColorEffectDetect.prototype.isColorized = function(el) {
 
 		if (el.elementType == "instance" && el.instanceType == "symbol") {
 
@@ -115,18 +113,21 @@
 	};
 
 	//search inside any symbol timelines on stage
-	ColorEffectDetect.prototype.searchElement = function (el) {
+	ColorEffectDetect.prototype.searchElement = function(libItem) {
 
-			//fl.trace(el.name);//returning blank, fix
-		//todo find unique identifier of valid symbols
-			if (this.elementsFound.indexOf(el.name) != -1){
-				this.elementsFound.push(el.name);
-				this.findColorEffects(el.timeline);
-			}
+		//if we have found this already, abort
+		if (this.elementsFound.indexOf(libItem.timeline.name) != -1) {
+			return;
+		}
 
-		};
-	
+		//new find, search its timeline
+		if (libItem.itemType == "movie clip" || libItem.itemType == "graphic") {
+			this.elementsFound.push(libItem.timeline.name);
+			this.findColorEffects(libItem.timeline);
+		}
+
+	};
+
 	new ColorEffectDetect;
-
 
 }());
