@@ -23,7 +23,74 @@
 
 	};
 
+	
 	ColorEffectDetect.prototype.traceToOutput = function() {
+		//todo make this pretty
+		var outputString = "";
+		var rowLengths = [];
+		var spacing = 5;
+		//todo make less junky
+		
+		
+		// rowlength initial values
+        for (i = 0; i < this.headings.length; ++i) {
+            rowLengths[i] = this.headings[i].length + spacing;
+        }
+		
+		for (i = 0; i < this.colorizedObjects.length; ++i) {
+			for (j = 0; j < rowLengths.length; ++j) {
+				
+				rowLengths[j] = Math.max(rowLengths[j], String(this.colorizedObjects[i][this.headings[j]]).length + spacing);
+				fl.trace(j+" "+rowLengths[j]+" "+String(this.colorizedObjects[i][this.headings[j]]).length)
+				
+			}
+		}
+		
+		fl.trace(rowLengths)
+		
+		var lineString = "";
+		var co = [];
+		for (var i = 0; i < this.colorizedObjects.length; ++i) {
+			co = this.colorizedObjects[i];
+			
+			lineString = " ";
+			for (j = 0; j < this.headings.length; ++j) {
+				
+				
+				//fl.trace(rowLengths[j]+this.colorizedObjects[i][this.headings[j]].length);
+				//var entryLength = this.colorizedObjects[i][this.headings[j]].length;
+				//var numSpaces = rowLengths[j] - entryLength;
+				//fl.trace(numSpaces);
+				lineString += co[this.headings[j]];
+				lineString += this.addSpaces(rowLengths[j]- co[this.headings[j]].length);
+			}
+		//fl.trace(i+" "+j);
+			fl.trace(lineString);
+			
+		}
+		
+		
+		
+		//fl.trace("rowLengths "+rowLengths);
+
+	};
+	
+
+	
+	
+	ColorEffectDetect.prototype.addSpaces = function(numSpaces) {
+		
+		var spaceString = "";
+		
+		for (var i = 0; i < numSpaces; ++i) {
+			spaceString += " ";
+		}
+			
+		return spaceString;
+	}
+
+	
+	ColorEffectDetect.prototype.traceToOutput2 = function() {
 		//todo make this pretty
 		var outputString = "";
 		//todo make less junky
@@ -51,8 +118,10 @@
 		//array of elements found to recursively search their timelines and avoid duplication
 		this.elementsFound = [];
 
+		this.headings = ["Timeline", "Layer Name", "Frame Number", "Instance Name", "Effect Type", "Effect Value"];
+		
 		fl.outputPanel.clear();
-
+		
 		fl.trace("---------- Color Effect Detect ----------");
 
 	};
@@ -63,7 +132,7 @@
 		var thisFrame;
 		var originalVisibility;
 		var thisElement;
-
+		
 		for (var j = tl.layers.length - 1; j >= 0; --j) {
 			thisLayer = tl.layers[j];
 
@@ -77,12 +146,11 @@
 
 					if (this.isColorized(thisElement)) {
 
-						this.colorizedObjects.push({
-							timeline: tl.name
-							, frame: k
-							, layer: thisLayer.name
-							, el: thisElement
-						});
+					
+				
+					
+						this.colorizedObjects.push({"Timeline": tl.name,"Layer Name": thisLayer.name,"Frame Number": String(k),"Instance Name": thisElement.libraryItem.name,"Effect Type": String(thisElement.colorMode),"Effect Value": this.getEffectValue(thisElement)});
+						
 
 						//search this element's timeline (if there is one)
 						this.searchElement(thisElement.libraryItem);
@@ -99,6 +167,37 @@
 
 	};
 
+	//checks to see if this element meets criteria we're looking for
+	ColorEffectDetect.prototype.getEffectValue = function(el) {
+
+		
+		var effectValueString = "";
+		
+		switch(el.colorMode) {
+			case "“brightness”":
+				effectValueString = String(el.brightness);
+				break;
+			case "tint":
+				effectValueString = String(el.tintColor);
+				effectValueString += " at ";
+				effectValueString += String(el.tintPercent +"%");
+				break;
+			case "advanced":
+				effectValueString = String("R:"+el.colorRedAmount);
+				effectValueString += String(" G:"+el.colorGreenAmount);
+				effectValueString += String(" B:"+el.colorBlueAmount);
+				effectValueString += String(" Alpha:"+el.colorAlphaAmount);
+		
+				break;
+			default:
+				effectValueString = "null";
+		}
+
+		
+
+		return effectValueString;
+	};
+	
 	//checks to see if this element meets criteria we're looking for
 	ColorEffectDetect.prototype.isColorized = function(el) {
 
