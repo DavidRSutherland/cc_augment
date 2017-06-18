@@ -387,6 +387,7 @@
 		}
 
 	};
+	
 
 	new ColorEffectDetect;
 
