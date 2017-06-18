@@ -20,16 +20,16 @@
 			this.findColorEffects(fl.getDocumentDOM().timelines[i], true);
 		}
 
-		if(!this.detectResultsMain.length && !this.detectResultsNested.length){
+		if (!this.detectResultsMain.length && !this.detectResultsNested.length) {
 			this.noResults();
 			return;
 		}
-		
+
 		//sort maintimeline results
 		if (this.detectResultsMain.length > 0) {
 			this.sortMainTimeline();
 		}
-		
+
 		this.detectResultsMain.reverse();
 		for (var i = 0; i < this.detectResultsNested.length; ++i) {
 			this.detectResultsMain.push(this.detectResultsNested[i]);
@@ -47,31 +47,30 @@
 		this.queueUpSelection();
 	};
 
-
 	ColorEffectDetect.prototype.noResults = function() {
 		this.traceTitle(50, "*");
 		fl.trace("0 RESULTS FOUND");
 	}
-	
+
 	//extract the required strings to trace out, not the most elegant way
 	ColorEffectDetect.prototype.extractStrings = function(arr, obj) {
 
 		for (var i = 0; i < this.detectResults.length; ++i) {
 			this.detectResultStrings.push({
-				count:String(i+1),
-				timeline: "[" +this.detectResults[i].timeline.name+"]",
-				layer: this.detectResults[i].layer.name,
-				frame: String(this.detectResults[i].frame),
-				symbol: this.detectResults[i].symbol.name,
-				effect: this.detectResults[i].effect,
-				value: this.detectResults[i].value
+				count: String(i + 1)
+				, timeline: "[" + this.detectResults[i].timeline.name + "]"
+				, layer: this.detectResults[i].layer.name
+				, frame: String(this.detectResults[i].frame)
+				, symbol: this.detectResults[i].symbol.name
+				, effect: this.detectResults[i].effect
+				, value: this.detectResults[i].value
 			});
 		}
 	}
-	
+
 	//Sort maintimeline objects by frame number
 	ColorEffectDetect.prototype.sortMainTimeline = function(arr, obj) {
-		
+
 		this.detectResultsMain.sort(function(a, b) {
 			var x = a.frame
 			var y = b.frame
@@ -106,30 +105,30 @@
 		for (i = 0; i < this.headings.length; ++i) {
 			rowLengths[i] = this.headings[i].length + spacing;
 		}
-		
+
 		//find the maximum width of each column so we can format the rows pretty-like
 		for (var i = 0; i < this.detectResultStrings.length; ++i) {
 			for (var j = 0; j < rowLengths.length; ++j) {
 				rowLengths[j] = Math.max(rowLengths[j], this.detectResultStrings[i][this.headings[j]].length + spacing);
 			}
 		}
-		
+
 		//the total width of the block of text
 		var totalWidth = 0;
 		for (i = 0; i < rowLengths.length; ++i) {
 			totalWidth += rowLengths[i];
 		}
-		
+
 		this.traceTitle(totalWidth, "*");
 		//trace out the headings
 		this.traceHeading(rowLengths);
 		//trace out a border 
 		this.makeBorder(totalWidth, "-");
 
-		var lineString = "";//the string that we build onto
+		var lineString = ""; //the string that we build onto
 
 		for (var i = 0; i < this.detectResultStrings.length; ++i) {
-			
+
 			//at the end do some custom string output
 			if (i == this.detectResultStrings.length - 1) {
 
@@ -137,7 +136,7 @@
 				//this.traceHeading(rowLengths);
 				//fl.trace(this.detectResultStrings.length+" instances found with color effects");
 				//this.makeBorder(totalWidth, " ");
-				
+
 				lineString = ">> "
 			} else {
 				//otherwise just reset the string
@@ -159,7 +158,7 @@
 		this.makeBorder(totalWidth, "-");
 		this.traceHeading(rowLengths);
 	};
-	
+
 	//the headig text
 	ColorEffectDetect.prototype.traceHeading = function(rl) {
 
@@ -179,13 +178,13 @@
 		}
 		fl.trace(borderString);
 	}
-	
+
 	//just a border with a custom string char
 	ColorEffectDetect.prototype.traceTitle = function(tw, thisChar) {
 		var borderString = "";
 		var titleString = " COLOR EFFECT DETECT ";
-		
-		var sideWidth = (tw/2)-titleString.length/2;
+
+		var sideWidth = (tw / 2) - titleString.length / 2;
 		for (i = 0; i < sideWidth; ++i) {
 			borderString += thisChar;
 		}
@@ -195,7 +194,7 @@
 		}
 		fl.trace(borderString);
 	}
-	
+
 	//add empty spaced to line up the columns
 	ColorEffectDetect.prototype.adjustSpacing = function(str, len) {
 		while (str.length < len) {
@@ -213,20 +212,20 @@
 
 			//if we are within a symbols timeline and the target timeline is main
 			//todo fix this
-			if(fl.getDocumentDOM().getTimeline().name != queued.timeline.name){
+			if (fl.getDocumentDOM().getTimeline().name != queued.timeline.name) {
 				fl.getDocumentDOM().exitEditMode();
 				fl.getDocumentDOM().exitEditMode();
 				fl.getDocumentDOM().exitEditMode();
-				
+
 			}
-			var targetTimeline="";
-			if(queued.timeline.libraryItem){
-						targetTimeline = queued.timeline.libraryItem.name;
-					}else{
-						targetTimeline = queued.timeline.name;
-					}
-			
-			fl.getDocumentDOM().library.editItem(targetTimeline);//main timeline
+			var targetTimeline = "";
+			if (queued.timeline.libraryItem) {
+				targetTimeline = queued.timeline.libraryItem.name;
+			} else {
+				targetTimeline = queued.timeline.name;
+			}
+
+			fl.getDocumentDOM().library.editItem(targetTimeline); //main timeline
 			//go to layer
 			fl.getDocumentDOM().getTimeline().setSelectedLayers(queued.layerIndex, true);
 			//go to frame
@@ -234,7 +233,7 @@
 			this.lockAllLayers(queued.timeline);
 			//unlock target layer
 			queued.timeline.layers[queued.layerIndex].locked = false;
-	
+
 		}
 
 	}
@@ -243,13 +242,13 @@
 
 		//array of objects found with color effects
 		this.detectResults = [];
-		this.detectResultsMain = [];//just the main timeline
-		this.detectResultsNested = [];//just the symbol objects in nested timelines
-		this.detectResultStrings = [];//only the strings
+		this.detectResultsMain = []; //just the main timeline
+		this.detectResultsNested = []; //just the symbol objects in nested timelines
+		this.detectResultStrings = []; //only the strings
 		//array of elements found to recursively search their timelines and avoid duplication
 		this.alreadyDetected = [];
 		//headings of the info we need
-		this.headings = ["count","timeline", "layer", "frame", "symbol", "effect", "value"];
+		this.headings = ["count", "timeline", "layer", "frame", "symbol", "effect", "value"];
 		//reset the output panel of previous junk
 		fl.outputPanel.clear();
 	};
@@ -272,44 +271,41 @@
 				for (var l = 0; l < thisFrame.elements.length; ++l) {
 
 					thisElement = thisFrame.elements[l];
-					
-					
-					if (thisElement.elementType == "instance" && thisElement.instanceType =="symbol" && thisLayer.layerType != "guide") {
+
+					if (thisElement.elementType == "instance" && thisElement.instanceType == "symbol" && thisLayer.layerType !=
+						"guide") {
 
 						this.zapTint(thisElement);
-						
-					
-							
+
 						if (this.isColorized(thisElement)) {
 							//clunky
-							
-							
+
 							if (isMain) {
 								this.detectResultsMain.push({
-									timeline: tl,
-									layer: thisLayer,
-									frame: k + 1,
-									symbol: thisElement.libraryItem,
-									effect: thisElement.colorMode,
-									value: this.getEffectValue(thisElement),
-									element: thisElement,
-									layerIndex:j
+									timeline: tl
+									, layer: thisLayer
+									, frame: k + 1
+									, symbol: thisElement.libraryItem
+									, effect: thisElement.colorMode
+									, value: this.getEffectValue(thisElement)
+									, element: thisElement
+									, layerIndex: j
 								});
 							} else {
 								this.detectResultsNested.push({
-									timeline: tl,
-									layer: thisLayer,
-									frame: k + 1,
-									symbol: thisElement.libraryItem,
-									effect: thisElement.colorMode,
-									value: this.getEffectValue(thisElement),
-									element: thisElement,
-									layerIndex:j
+									timeline: tl
+									, layer: thisLayer
+									, frame: k + 1
+									, symbol: thisElement.libraryItem
+									, effect: thisElement.colorMode
+									, value: this.getEffectValue(thisElement)
+									, element: thisElement
+									, layerIndex: j
 								});
 							}
 
 						}
-					
+
 						//search this element's timeline (if there is one)
 						this.searchElement(thisElement.libraryItem);
 					}
@@ -322,16 +318,15 @@
 	};
 
 	ColorEffectDetect.prototype.zapTint = function(el) {
-			
-						if(el.colorMode == "tint"){
-								if(el.tintColor == "#D9F2FD"){
-						
-								el.colorMode = "alpha";
-							}
-						}
+
+		if (el.colorMode == "tint") {
+			if (el.tintColor == "#D9F2FD") {
+
+				el.colorMode = "alpha";
+			}
+		}
 	}
-	
-						
+
 	//checks to see if this element meets criteria we're looking for
 	ColorEffectDetect.prototype.getEffectValue = function(el) {
 
