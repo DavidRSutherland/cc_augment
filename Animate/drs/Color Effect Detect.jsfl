@@ -275,7 +275,7 @@
 					if (thisElement.elementType == "instance" && thisElement.instanceType == "symbol" && thisLayer.layerType !=
 						"guide") {
 
-						this.zapTint(thisElement);
+						//this.zapTint(thisElement);
 
 						if (this.isColorized(thisElement)) {
 							//clunky
