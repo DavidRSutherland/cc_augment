@@ -47,25 +47,31 @@
 		//placeholder matrix values that control x/y scale axis
 		var matA = 0;//x axis scale
 		var matD = 0;//y axis scale
-		
+		var matB = 0;//vertical skew
+		var matC = 0;//horizontal skew
+
 		//make x/y axis scale the same by defaulting to bigger scale
 		if(elFill.matrix.a > elFill.matrix.d){
 			matA = elFill.matrix.a;
 			matD = elFill.matrix.a;
+			matB = elFill.matrix.a;
+			matC = elFill.matrix.a;
 		}else{
 			matA = elFill.matrix.d;
 			matD = elFill.matrix.d;
+			matB = elFill.matrix.d;
+			matC = elFill.matrix.d;
 		}
-		
+	
 		//make a new matrial based on legacy values
 		var mat = newFill.matrix;
 		mat.a = matA;//replace with new
-		mat.b = elFill.matrix.b;
-		mat.c = elFill.matrix.c;
+		mat.b = 0;//reset vertical skew
+		mat.c = 0;//reset horizontal skew
 		mat.d = matD;//replace with new
 		mat.tx = elFill.matrix.tx;
 		mat.ty = elFill.matrix.ty;
-			
+
 		//new seyt the new fill
 		thisElement.setCustomFill(newFill);
 		
