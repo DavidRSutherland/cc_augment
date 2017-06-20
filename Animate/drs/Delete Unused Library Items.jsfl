@@ -20,7 +20,7 @@
 			fl.trace("No unused items");
 			return;
 		}
-		
+
 		//opening message
 		fl.trace("--------- Deleting unused library items... ---------");
 
@@ -34,7 +34,6 @@
 		fl.trace("---------- " + items.length + " unused library items deleted. ----------");
 
 	}
-
 
 	new deleteUnused;
 }();
