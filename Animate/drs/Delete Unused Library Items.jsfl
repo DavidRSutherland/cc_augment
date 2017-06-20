@@ -5,6 +5,7 @@
 	 *	DavidRSutherland - davers.com
 	 *
 	 *  Selects and deletes all unused library items for cleaning up files
+	 *	Traces list of deleted symbols to output window
 	 */
 
 	var deleteUnused = function() {
