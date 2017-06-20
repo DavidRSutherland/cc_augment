@@ -6,6 +6,7 @@
 	 *
 	 *  Color effects in native Flash animation get converted to CreateJS filters when exporting for HTML canvas
 	 *  This script helps to identify all the symbols with color effects applied by tracing them to the output panel
+	 *  Code inspired and borrowed from CloudKid's Filter Finder script
 	 */
 
 	function ColorEffectDetect() {
@@ -48,8 +49,9 @@
 	};
 
 	ColorEffectDetect.prototype.noResults = function() {
-		this.traceTitle(50, "*");
-		fl.trace("0 RESULTS FOUND");
+		this.traceTitle(" COLOR EFFECT DETECT ", 100, "*");
+		this.traceTitle(" 0 RESULTS FOUND ", 100, " ");
+
 	}
 
 	//extract the required strings to trace out, not the most elegant way
@@ -119,7 +121,8 @@
 			totalWidth += rowLengths[i];
 		}
 
-		this.traceTitle(totalWidth, "*");
+		this.traceTitle(" COLOR EFFECT DETECT ", totalWidth, "*");
+		this.traceTitle(" The following instances have color effects. ", totalWidth, " ");
 		//trace out the headings
 		this.traceHeading(rowLengths);
 		//trace out a border 
@@ -132,15 +135,9 @@
 			//at the end do some custom string output
 			if (i == this.detectResultStrings.length - 1) {
 
-				//this.makeBorder(totalWidth, "-");
-				//this.traceHeading(rowLengths);
-				//fl.trace(this.detectResultStrings.length+" instances found with color effects");
-				//this.makeBorder(totalWidth, " ");
-
 				lineString = ">> "
 			} else {
-				//otherwise just reset the string
-				//lineString = (i+1)+"  ";//add numbers?
+
 				lineString = "   ";
 			}
 			//build the strings, this is not pretty
@@ -157,6 +154,7 @@
 
 		this.makeBorder(totalWidth, "-");
 		this.traceHeading(rowLengths);
+		fl.trace(this.detectResultStrings.length + " instaces found with color effects. >> is queued up for edit.");
 	};
 
 	//the headig text
@@ -180,15 +178,15 @@
 	}
 
 	//just a border with a custom string char
-	ColorEffectDetect.prototype.traceTitle = function(tw, thisChar) {
+	//just a border with a custom string char
+	ColorEffectDetect.prototype.traceTitle = function(str, tw, thisChar) {
 		var borderString = "";
-		var titleString = " COLOR EFFECT DETECT ";
 
-		var sideWidth = (tw / 2) - titleString.length / 2;
+		var sideWidth = (tw / 2) - str.length / 2;
 		for (i = 0; i < sideWidth; ++i) {
 			borderString += thisChar;
 		}
-		borderString += titleString
+		borderString += str
 		for (i = 0; i < sideWidth; ++i) {
 			borderString += thisChar;
 		}
@@ -342,10 +340,10 @@
 				effectValueString += String(el.tintPercent + "%");
 				break;
 			case "advanced":
-				effectValueString = String("A:" + el.colorAlphaAmount);
-				effectValueString += String(" R:" + el.colorRedAmount);
-				effectValueString += String(" G:" + el.colorGreenAmount);
-				effectValueString += String(" B:" + el.colorBlueAmount);
+				effectValueString = String("A:" + el.colorAlphaPercent + "% / " + el.colorAlphaAmount);
+				effectValueString += String(" R:" + el.colorRedPercent + "% / " + el.colorRedAmount);
+				effectValueString += String(" G:" + el.colorGreenPercent + "% / " + el.colorGreenAmount);
+				effectValueString += String(" B:" + el.colorBluePercent + "% / " + el.colorBlueAmount);
 
 				break;
 			default:
@@ -358,13 +356,31 @@
 	//checks to see if this element meets criteria we're looking for
 	ColorEffectDetect.prototype.isColorized = function(el) {
 
-		if (el.colorMode != "none" && el.colorMode != "alpha") {
+		if (el.colorMode != "none" && el.colorMode != "alpha" && !this.advancedAlpha(el)) {
 			return true;
 		}
 
 		return false;
 	};
 
+	//search inside any symbol timelines on stage
+	ColorEffectDetect.prototype.advancedAlpha = function(el) {
+
+		if (el.colorMode == "advanced") {
+
+			if (el.colorRedAmount == 0 &&
+				el.colorGreenAmount == 0 &&
+				el.colorBlueAmount == 0 &&
+				el.colorRedPercent == 100 &&
+				el.colorGreenPercent == 100 &&
+				el.colorBluePercent == 100) {
+				return true;
+			}
+
+		}
+
+		return false;
+	}
 	//search inside any symbol timelines on stage
 	ColorEffectDetect.prototype.searchElement = function(libItem) {
 
