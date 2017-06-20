@@ -75,7 +75,7 @@
 		//new seyt the new fill
 		thisElement.setCustomFill(newFill);
 		
-		fl.trace("*BOOM!* Radial gradient circularized!");
+		fl.trace("Radial gradient circularized");
 		//fl.trace("------------------------------------------------------");
 	};
 	
